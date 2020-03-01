@@ -25,7 +25,7 @@ long removeDuplicates(long arr[], long n) {
 }
 int binarySearch(long arr[], long l, long r, long x) 
 { 
-    if (r > l) { 
+    if (r > l){ 
         int mid = l + (r - l) / 2; 
   
         // If the element is present at the middle 

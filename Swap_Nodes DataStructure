@@ -1,0 +1,114 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+
+#define rep_i(a,b) for(int i=a;i<b;i++)
+#define rep_j(a,b) for(int j=a;j<b;j++)
+#define M 1000000007
+#define ull unsigned long long
+
+
+struct node
+{
+    int data;
+    int depth;
+    node* left;
+    node* right;
+};
+node* newNode(int data, int depth) {
+    node* curr = (node*)malloc(sizeof(node));
+    curr->data = data;
+    curr->depth = depth;
+    curr->left = curr->right = NULL;
+    return (curr);
+}
+
+node* constructTree(node* root, vector<vector<int>> v) {
+    queue<node*> q;
+    int depth = 0;
+    root = newNode(1, depth + 1);
+    node* curr = root;
+    q.push(root);
+
+    int n = 0;
+    int numOfNode = v.size();
+    while (n < numOfNode) {
+        curr =  q.front();
+        q.pop();
+        int l = v[n][0];
+        int r = v[n][1];
+        curr->left = l == -1 ? NULL : newNode(l, curr->depth + 1);
+        curr->right = r == -1 ? NULL : newNode(r, curr->depth + 1);
+        if (curr->left != NULL && curr->left->data != -1)
+            q.push(curr->left);
+        if (curr->right != NULL && curr->right->data != -1)
+            q.push(curr->right);
+        n++;
+    }
+    return root;
+}
+node* swapNodes(node *root, int d) {
+    queue<node*> q;
+    q.push(root);
+    while (!q.empty()) {
+        int len = q.size();
+        for (int i = 0; i < len; i++) {
+            node* curr = q.front();
+            if (curr->depth >= d && curr->depth % d == 0) {
+                node* temp = curr->left;
+                curr->left = curr->right;
+                curr->right = temp;
+            }
+            q.pop();
+            if (curr->left)
+                q.push(curr->left);
+            if (curr->right)
+                q.push(curr->right);
+
+        }
+    }
+    return root;
+}
+void inorder(node *root) {
+    if (root == NULL) {
+        return;
+    }
+    inorder(root->left);
+    cout << root->data << " ";
+    inorder(root->right);
+}
+
+int main()
+{
+    
+    int n;
+    cin >> n;
+    node* root = NULL;
+    vector<vector<int>> indexes(n);
+    for (int indexes_row_itr = 0; indexes_row_itr < n; indexes_row_itr++) {
+        indexes[indexes_row_itr].resize(2);
+
+        for (int indexes_column_itr = 0; indexes_column_itr < 2; indexes_column_itr++) {
+            cin >> indexes[indexes_row_itr][indexes_column_itr];
+        }
+
+    }
+    root = constructTree(root, indexes);
+    int queries_count;
+    cin >> queries_count;
+
+    vector<int> queries(queries_count);
+
+    for (int queries_itr = 0; queries_itr < queries_count; queries_itr++) {
+        int queries_item;
+        cin >> queries_item;
+        root = swapNodes(root, queries_item);
+        inorder(root);
+        cout << endl;
+        queries[queries_itr] = queries_item;
+
+    }
+    // inorder(root);
+    return 0;
+}
